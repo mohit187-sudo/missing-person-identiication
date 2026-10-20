@@ -44,3 +44,4 @@ Thumbs.db
 tests/backend/.coverage
 *.egg
 .tox/
+*.tsbuildinfo
