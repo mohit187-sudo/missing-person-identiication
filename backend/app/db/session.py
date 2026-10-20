@@ -4,7 +4,9 @@ from __future__ import annotations
 from typing import Generator
 
 from sqlalchemy import create_engine, event
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from pathlib import Path
 
 from backend.app.core.config import settings
 
@@ -16,8 +18,11 @@ class Base(DeclarativeBase):
 def _make_engine():
     url = settings.database_url
     connect_args = {}
-    if url.startswith("sqlite"):
+    parsed = make_url(url)
+    if parsed.drivername.startswith("sqlite"):
         connect_args["check_same_thread"] = False
+        if parsed.database and parsed.database != ":memory:":
+            Path(parsed.database).parent.mkdir(parents=True, exist_ok=True)
     eng = create_engine(url, connect_args=connect_args, pool_pre_ping=True, future=True)
 
     if url.startswith("sqlite"):

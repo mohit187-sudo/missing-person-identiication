@@ -8,11 +8,13 @@ from pathlib import Path
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+from sqlalchemy.engine import make_url
 
 # Make the project root importable when alembic runs from anywhere.
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from backend.app.core.config import settings  # noqa: E402
 from backend.app.db.session import Base  # noqa: E402
 from backend.app import models  # noqa: E402,F401  (register all tables)
 
@@ -22,7 +24,10 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-db_url = os.environ.get("DATABASE_URL", "sqlite:///./storage/dev.db")
+db_url = os.environ.get("DATABASE_URL") or settings.database_url
+parsed_url = make_url(db_url)
+if parsed_url.drivername.startswith("sqlite") and parsed_url.database and parsed_url.database != ":memory:":
+    Path(parsed_url.database).parent.mkdir(parents=True, exist_ok=True)
 # Alembic config uses 'sqlalchemy.url' interpolation-free.
 config.set_main_option("sqlalchemy.url", db_url)
 
