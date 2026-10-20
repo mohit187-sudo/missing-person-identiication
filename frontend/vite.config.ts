@@ -21,6 +21,8 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
+    // Allow any preview host (Arena e2b.app previews + localhost).
+    allowedHosts: true,
     fs: {
       // Allow loading shared test sources from ../tests/frontend
       allow: [resolve(__dirname, '..')],
