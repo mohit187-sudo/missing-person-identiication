@@ -1,0 +1,12 @@
+{
+  "name": "missing-person-identification-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Root convenience scripts for the Missing Person Identification System monorepo (see frontend/ for the React app).",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:frontend": "npm --prefix frontend run test",
+    "lint:frontend": "npm --prefix frontend run lint"
+  }
+}

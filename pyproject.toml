@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+testpaths = ["tests/backend"]
+addopts = "-q --strict-markers --cov=backend --cov-report=term-missing"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["backend"]
+omit = ["*/__pycache__/*", "*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true

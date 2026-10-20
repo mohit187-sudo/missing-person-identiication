@@ -1,0 +1,59 @@
+# Missing Person Identification System — local infrastructure
+# Usage: docker compose up -d db        (PostgreSQL 16 + pgvector)
+#        docker compose up -d           (db + backend + frontend)
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: mpis-db
+    environment:
+      POSTGRES_USER: mpis
+      POSTGRES_PASSWORD: mpis
+      POSTGRES_DB: mpis
+    ports:
+      - "5432:5432"
+    volumes:
+      - mpis_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mpis -d mpis"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: mpis-backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: production
+      DEMO_MODE: "true"
+      DATABASE_URL: postgresql+psycopg://mpis:mpis@db:5432/mpis
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?set JWT_SECRET_KEY in .env}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      FRONTEND_URL: http://localhost:5173
+      AI_MODEL_PATH: /app/backend/models
+      STORAGE_DIR: /app/storage
+    ports:
+      - "8000:8000"
+    volumes:
+      - mpis_storage:/app/storage
+      - ./backend/models:/app/backend/models:ro
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mpis-frontend
+    depends_on:
+      - backend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "5173:80"
+
+volumes:
+  mpis_pgdata:
+  mpis_storage:
