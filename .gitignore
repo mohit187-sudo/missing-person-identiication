@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+.vite/
+*.log
+npm-debug.log*
+
+# Environment / secrets — NEVER commit real credentials
+.env
+.env.*
+!.env.example
+
+# Local storage (private uploads, database files, model weights)
+storage/
+!storage/.gitkeep
+backend/models/*.onnx
+*.db
+*.sqlite3
+
+# IDE / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test / build artifacts
+tests/backend/.coverage
+*.egg
+.tox/
